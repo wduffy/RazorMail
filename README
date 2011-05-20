@@ -1,10 +1,15 @@
 RazorMail allows sending of email using the razor template engine outwith the context of an MVC project, keeping the concerns of email generation within your domain rather than the UI.
 
-It is build on top of the excellent RazorEngine project and also uses the HtmlAgilityPack project.
+RazorMail is build on top of the excellent RazorEngine project and also uses the HtmlAgilityPack project.
 
 Some nice features of RazorMail include:
-- Ability to add multiple templates (razorengine doe not support layouts) so that your emails can be more modular. Templates can be embedded resources, physical files or strings. You can even combine their usage if required.
-- A dynamic model that can be set using property style syntax (razorMail.Set.Name = "William")
-- Automatic url processing based on the environment to ensure that all links and images are absolute, great for testing emails and putting live without modifying lots of urls.
-- Automatic generation of a plain text version of your email from razors generated html. This can also be overridden with a manual plain text version if required.
+
+- Ability to add multiple templates (razorengine does not support layouts) so that your emails can be more modular. Templates can be embedded resources, physical files or strings. You can even combine their usage if required.
+
+- A dynamic model that can be set using property style syntax (i.e. razorMail.Set.Name = "William")
+
+- Automatic url processing based on the environment to ensure that all links and images are absolute; great for testing emails and pushing live without modifying lots of urls.
+
+- Automatic generation of a plain text version of your email from razors generated html. This can also be overridden with a manual version if required.
+
 - RazorMail has been designed to work best with an IOC container, however it can be used without one.
