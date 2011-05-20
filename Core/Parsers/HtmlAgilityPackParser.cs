@@ -60,7 +60,7 @@ namespace RazorMail.Parsers
                 if (string.IsNullOrWhiteSpace(text))
                     text = x.FirstChild.Attributes["alt"] != null ? x.FirstChild.Attributes["alt"].Value : href;
 
-                HtmlNode link = HtmlTextNode.CreateNode(text + (href != text ? " [ " + href + " ]" : ""));
+                var link = HtmlTextNode.CreateNode(text + (href != text ? " [ " + href + " ]" : ""));
 
                 x.ParentNode.ReplaceChild(link, x);
             });
@@ -85,7 +85,7 @@ namespace RazorMail.Parsers
 
         protected virtual void AppendTableDividers(HtmlNode root)
         {
-            root.SelectNodes("//td[position()<last()]|//th[position()<last()]").Where(x => !string.IsNullOrWhiteSpace(x.InnerText)).ForEach(x => x.AppendChild(HtmlTextNode.CreateNode(", ")));
+            root.SelectNodes("//td[position()<last()]|//th[position()<last()]").ForEach(x => { if (!string.IsNullOrWhiteSpace(x.InnerText)) x.AppendChild(HtmlTextNode.CreateNode(", ")); });
             root.SelectNodes("//td[last()]|//th[last()]").ForEach(x => x.AppendChild(HtmlTextNode.CreateNode("<br />")));
         }
 
