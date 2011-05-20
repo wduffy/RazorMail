@@ -55,19 +55,19 @@ namespace RazorMail
                 mail.Subject = message.Subject;
                 mail.Sender = Sender;                                           // Sender (e.g. the CEO's Assistant)
                 mail.From = message.From ?? Sender;                             // From (e.g. the CEO)
-                message.ReplyTo.ForEach(x => mail.To.Add(x));                   // ReplyTo (e.g. the Secretary)
+                message.ReplyTo.ForEach(x => mail.ReplyToList.Add(x));          // ReplyTo (e.g. the Secretary)
                 message.To.ForEach(x => mail.To.Add(x));                        // Recipient
-                message.Cc.ForEach(x => mail.To.Add(x));                        // Cc
-                message.Bcc.ForEach(x => mail.To.Add(x));                       // Bcc
+                message.Cc.ForEach(x => mail.CC.Add(x));                        // Cc
+                message.Bcc.ForEach(x => mail.Bcc.Add(x));                      // Bcc
                 message.Attachments.ForEach(x => mail.Attachments.Add(x));
 
                 // If in testing then alter message
                 if (Testing != null)
                 {
                     // TODO: Put the original recipient lists into the test message (inline or attachment?)
-                    message.To.Clear();
-                    message.Cc.Clear();
-                    message.Bcc.Clear();
+                    mail.To.Clear();
+                    mail.CC.Clear();
+                    mail.Bcc.Clear();
 
                     mail.To.Add(Testing);
                 }
