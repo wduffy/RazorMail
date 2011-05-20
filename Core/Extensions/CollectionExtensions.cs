@@ -13,8 +13,9 @@ namespace RazorMail.Extensions
         /// <remarks></remarks>
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action) where T : class
         {
-            foreach (T element in source)
-                action(element);
+           if (source != null)
+               foreach (T element in source)
+                   action(element);
         }
 
         /// <summary>
