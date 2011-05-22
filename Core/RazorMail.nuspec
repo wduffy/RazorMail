@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <authors>William Duffy</authors>
+    <owners>William Duffy</owners>
+    <projectUrl>https://github.com/wduffy/RazorMail</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <tags>Razor Email</tags>
+  </metadata>
+</package>
