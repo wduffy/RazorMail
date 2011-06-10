@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace RazorMail.Templates
 {
 
-    internal interface ITemplate
+    public interface ITemplate
     {
         void Write(Stream template);
     }

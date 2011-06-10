@@ -117,14 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExceptionNoBody" xml:space="preserve">
-    <value>RazorMail: The body cannot be null or empty.</value>
+  <data name="ExceptionArgumentNullOrEmpty" xml:space="preserve">
+    <value>RazorMail: Parameter cannot be null or empty.</value>
   </data>
   <data name="ExceptionNoRecipient" xml:space="preserve">
     <value>RazorMail: At least one recipient must be specified before sending email.</value>
   </data>
   <data name="ExceptionNoSubject" xml:space="preserve">
     <value>RazorMail: The subject cannot be null or empty.</value>
+  </data>
+  <data name="ExceptionNoTemplates" xml:space="preserve">
+    <value>RazorMail: At least one template must be specified before sending email.</value>
   </data>
   <data name="TestingRecipientName" xml:space="preserve">
     <value>Testing Recipient</value>

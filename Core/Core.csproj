@@ -47,7 +47,13 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\CollectionExtensions.cs" />
+    <Compile Include="Templates\TemplateCollection.cs" />
+    <Compile Include="Extensions\MailAddressCollectionExtensions.cs" />
+    <Compile Include="Templates\ITemplateFactory.cs" />
+    <Compile Include="Templates\TemplateFactory.cs" />
+    <Compile Include="Abstractions\FileReader.cs" />
+    <Compile Include="Abstractions\IFileReader.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Parsers\HtmlAgilityPackParser.cs" />
     <Compile Include="Parsers\IParser.cs" />
     <Compile Include="IRazorMailSender.cs" />

@@ -61,11 +61,11 @@ namespace RazorMail.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RazorMail: The body cannot be null or empty..
+        ///   Looks up a localized string similar to RazorMail: Parameter cannot be null or empty..
         /// </summary>
-        internal static string ExceptionNoBody {
+        internal static string ExceptionArgumentNullOrEmpty {
             get {
-                return ResourceManager.GetString("ExceptionNoBody", resourceCulture);
+                return ResourceManager.GetString("ExceptionArgumentNullOrEmpty", resourceCulture);
             }
         }
         
@@ -84,6 +84,15 @@ namespace RazorMail.Properties {
         internal static string ExceptionNoSubject {
             get {
                 return ResourceManager.GetString("ExceptionNoSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RazorMail: At least one template must be specified before sending email..
+        /// </summary>
+        internal static string ExceptionNoTemplates {
+            get {
+                return ResourceManager.GetString("ExceptionNoTemplates", resourceCulture);
             }
         }
         

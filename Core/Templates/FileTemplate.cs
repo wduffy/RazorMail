@@ -1,21 +1,22 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace RazorMail.Templates
 {
 
-    internal class FileTemplate : ITemplate
+    public class FileTemplate : ITemplate
     {
+        private IFileReader _reader;
         private string _path;
 
-        public FileTemplate(string path)
+        public FileTemplate(IFileReader reader, string path)
         {
+            _reader = reader;
             _path = path;
         }
 
         public void Write(Stream template)
         {
-            using (var stream = File.OpenRead(_path))
+            using (var stream = _reader.OpenRead(_path))
                 stream.CopyTo(template);
         }
     }

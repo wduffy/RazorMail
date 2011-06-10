@@ -2,199 +2,109 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
-using System.Linq;
 using System.Net.Mail;
 using System.Reflection;
 using System.Text;
 using RazorEngine;
+using RazorMail.Parsers;
+using RazorMail.Properties;
 using RazorMail.Templates;
-using System.Net.Mime;
 
 namespace RazorMail
 {
 
     /// <summary>
-    /// Represents a razor e-mail message that can be sent using a concrete implementaion of the RazorMail.IRazorMailSender interface.
+    /// Represents a razor e-mail message that can be sent using a concrete implementation of the RazorMail.IRazorMailSender interface.
     /// </summary>
-    public class RazorMailMessage
+    public class RazorMailMessage : IDisposable
     {
-        public string Subject { get; set; }
-        public MailPriority Priority { get; set; }
+
+        protected MailMessage Message { get; set; }
+        //public string Subject { get { return Message.Subject; } set { Message.Subject = value; } }
         public Encoding Encoding { get; set; }
+        public MailPriority Priority { get { return Message.Priority; } set { Message.Priority = value; } }
+        public MailAddress From { get { return Message.From; } set { Message.From = value; } }
+        public MailAddressCollection To { get { return Message.To; } }
+        public MailAddressCollection Cc { get { return Message.CC; } }
+        public MailAddressCollection Bcc { get { return Message.Bcc; } }
+        public MailAddressCollection ReplyTo { get { return Message.ReplyToList; } }
+        public AttachmentCollection Attachments { get { return Message.Attachments; } }
+        
         public string PlainText { get; set; }
-        internal MailAddress From { get; set; }
-        internal MailAddressCollection To { get; set; }
-        internal MailAddressCollection Cc { get; set; }
-        internal MailAddressCollection Bcc { get; set; }
-        internal MailAddressCollection ReplyTo { get; set; }
-        internal IList<Attachment> Attachments { get; set; }
+        public TemplateCollection Templates { get; private set; }
         public dynamic Set { get; private set; }
-        private List<ITemplate> Templates { get; set; }
 
         /// <summary>
         /// Initialises an empty instance of the RazorMail.RazorMailmessage class.
         /// </summary>
         /// <param name="subject">A System.String that contains the subject text.</param>
-        public RazorMailMessage(string subject)
-        {
-            Subject = subject;
-            To = new MailAddressCollection();
-            Cc = new MailAddressCollection();
-            Bcc = new MailAddressCollection();
-            ReplyTo = new MailAddressCollection();
-            Attachments = new List<Attachment>();
-            
-            Set = new ExpandoObject();
-            Templates = new List<ITemplate>();
-        }
-
-        #region Mail Addresses
+        public RazorMailMessage(string subject) : this(subject, Assembly.GetCallingAssembly(), null) { }
 
         /// <summary>
-        /// Adds a recipient to this message
+        /// Initialises an empty instance of the RazorMail.RazorMailmessage class.
         /// </summary>
-        /// <param name="address">The address of this recipient</param>
-        /// <param name="displayName">The name of this recipient</param>
-        public void AddTo(string address, string displayName)
-        {
-            To.Add(new MailAddress(address, displayName));
-        }
-
-        /// <summary>
-        /// Adds a reply-to recipient to this message
-        /// </summary>
-        /// <param name="address">The address of the reply-to recipient</param>
-        /// <param name="displayName">The name of the reply-to recipient</param>
-        public void AddReplyTo(string address, string displayName)
-        {
-            ReplyTo.Add(new MailAddress(address, displayName));
-        }
-
-        /// <summary>
-        /// Adds a carbon copy recipient to this message
-        /// </summary>
-        /// <param name="address">The address of the carbon copy recipient</param>
-        /// <param name="displayName">The name of the carbon copy recipient</param>
-        public void AddCc(string address, string displayName)
-        {
-            Cc.Add(new MailAddress(address, displayName));
-        }
-
-        /// <summary>
-        /// Adds a blind carbon copy recipient to this message
-        /// </summary>
-        /// <param name="address">The address of the blind carbon copy recipient</param>
-        /// <param name="displayName">The name of the blind carbon copy recipient</param>
-        public void AddBcc(string address, string displayName)
-        {
-            Bcc.Add(new MailAddress(address, displayName));
-        }
-
-        /// <summary>
-        /// Sets the 'from' identity of this message
-        /// </summary>
-        /// <param name="address">The address of the sender</param>
-        /// <param name="displayName">The name of the sender</param>
-        public void AddFrom(string address, string displayName)
-        {
-            From = new MailAddress(address, displayName);
-        }
-
-        #endregion
-        #region Attachments
-
-        /// <summary>
-        /// Adds an attachment to this message.
-        /// </summary>
-        /// <param name="fileName">A System.String that contains a file path to use to create this attachment.</param>
-        public void AddAttachment(string fileName)
-        {
-            Attachments.Add(new Attachment(fileName));
-        }
-
-        /// <summary>
-        /// Adds an attachment to this message.
-        /// </summary>
-        /// <param name="fileName">A System.String that contains a file path to use to create this attachment.</param>
-        /// <param name="contentType">A System.Net.Mime.ContentType that describes the data in sting.</param>
-        public void AddAttachment(string fileName, ContentType contentType)
-        {
-            Attachments.Add(new Attachment(fileName, contentType));
-        }
-
-        /// <summary>
-        /// Adds an attachment to this message.
-        /// </summary>
-        /// <param name="fileName">A System.String that contains a file path to use to create this attachment.</param>
-        /// <param name="mediaType">A System.String that contains the MIME Content-Header information for this attachment. This value can be null.</param>
-        public void AddAttachment(string fileName, string mediaType)
-        {
-            Attachments.Add(new Attachment(fileName, mediaType));
-        }
-
-        /// <summary>
-        /// Adds an attachment to this message.
-        /// </summary>
-        /// <param name="contentStream">A readable System.IO.Stream that contains the content for this attachment.</param>
-        /// <param name="name">A System.String that contains the value for the System.Net.Mime.ContentType.Name property of the System.Net.Mime.ContentType associated with this attachment. This value can be null.</param>
-        public void AddAttachment(Stream contentStream, string name)
-        {
-            Attachments.Add(new Attachment(contentStream, name));
-        }
-
-        /// <summary>
-        /// Adds an attachment to this message.
-        /// </summary>
-        /// <param name="contentStream">A readable System.IO.Stream that contains the content for this attachment.</param>
-        /// <param name="contentType">A System.Net.Mime.ContentType that describes the data in stream.</param>
-        public void AddAttachment(Stream contentStream, ContentType contentType)
-        {
-            Attachments.Add(new Attachment(contentStream, contentType));
-        }
-
-        /// <summary>
-        /// Adds an attachment to this message.
-        /// </summary>
-        /// <param name="contentStream">A readable System.IO.Stream that contains the content for this attachment.</param>
-        /// <param name="name">A System.String that contains the value for the System.Net.Mime.ContentType.Name property of the System.Net.Mime.ContentType associated with this attachment. This value can be null.</param>
-        /// <param name="mediaType">A System.String that contains the MIME Content-Header information for this attachment. This value can be null.</param>
-        public void AddAttachment(Stream contentStream, string name, string mediaType)
-        {
-            Attachments.Add(new Attachment(contentStream, name, mediaType));
-        }
-
-        #endregion
+        /// <param name="subject">A System.String that contains the subject text.</param>
+        /// <param name="assembly">A reference to the System.Reflection.Assembly that contains embedded resources used within this RazorMailMessage's template</param>
+        public RazorMailMessage(string subject, Assembly assembly) : this(subject, assembly, null) { }
         
-        /// <summary>
-        /// Adds a template to the email for rendering.
-        /// </summary>
-        /// <param name="template">A System.String that contains the template to be added. Can be an assembly resource name, a file path or an html string.</param>
-        public void AddTemplate(string template)
+        internal RazorMailMessage(string subject, Assembly assembly, IFileReader fileReader)
         {
-            // Is this template an embedded resource?
-            var assembly = Assembly.GetCallingAssembly();
-            if (assembly.GetManifestResourceNames().Contains(string.Format("{0}.{1}", assembly.GetName().Name, template)))
-            {
-                Templates.Add(new EmbeddedResourceTemplate(template, assembly));
-                return;
-            }
+            Message = new MailMessage();
 
-            // Is this template a file resource?
-            if (File.Exists(template))
-            {
-                Templates.Add(new FileTemplate(template));
-                return;
-            }
+            Message.Subject = subject;
+            Encoding = Encoding.UTF8;
 
-            // It must be a basic string template
-            Templates.Add(new StringTemplate(template));
+            Templates = new TemplateCollection(assembly, fileReader ?? new FileReader());
+            Set = new ExpandoObject();
+        }
+
+        internal virtual MailMessage GetMailMessage(IParser parser)
+        {            
+            // Perform requirement checks
+            EnsureValues();
+
+            // Set econding for headers and subject
+            Message.HeadersEncoding = Encoding;
+            Message.SubjectEncoding = Encoding;
+
+            // Create the plain text and html views
+            CreateAlternateViews(parser).ForEach(x => Message.AlternateViews.Add(x));
+            
+            // Return the MailMessage
+            return Message;
+        }
+
+        protected void EnsureValues()
+        {
+            if (string.IsNullOrWhiteSpace(Message.Subject)) throw new Exception(Resources.ExceptionNoSubject);
+            if (Templates.IsEmpty()) throw new Exception(Resources.ExceptionNoTemplates);
+            if (To.IsEmpty()) throw new Exception(Resources.ExceptionNoRecipient);
+        }
+
+        protected IEnumerable<AlternateView> CreateAlternateViews(IParser parser)
+        {
+            var views = new List<AlternateView>();
+            
+            // Get the rendered template and base all its relative urls
+            var body = parser.BaseUrls(RenderTemplates());
+
+            // Create the plain text view (base64)
+            var plainTextView = AlternateView.CreateAlternateViewFromString(PlainText ?? parser.StripHtml(body), Encoding, "text/plain");
+            views.Add(plainTextView);
+
+            // Create the html view (base64)
+            var htmlView = AlternateView.CreateAlternateViewFromString(body, Encoding, "text/html");
+            views.Add(htmlView);
+
+            // Return the alternate views
+            return views;
         }
 
         ///<summary>
         ///Renders the Razor templates and returns the result as a System.String.
         ///</summary>
         ///<remarks></remarks>
-        public string Render()
+        protected string RenderTemplates()
         {
             string output = string.Empty;
 
@@ -207,9 +117,24 @@ namespace RazorMail
                 output = new StreamReader(stream).ReadToEnd();
             }
 
-            // Parse the template using RazorEngine and replace all links with 
+            // Parse the template using RazorEngine and return the result
             return Razor.Parse(output, Set);
         }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Message.Dispose();
+            // This object will be cleaned up by the Dispose method.
+            // Therefore, call GC.SupressFinalize to
+            // take this object off the finalization queue
+            // and prevent finalization code for this object
+            // from executing a second time.
+            GC.SuppressFinalize(this);
+        }
+        
+        #endregion
 
     }
 

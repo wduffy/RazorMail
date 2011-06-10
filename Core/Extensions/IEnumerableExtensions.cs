@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace RazorMail.Extensions
+namespace RazorMail
 {
-    internal static class CollectionExtensions
+    internal static class IEnumerableExtensions
     {
 
         /// <summary>
         /// Performs the specified action on each element of the source
         /// </summary>
         /// <remarks></remarks>
-        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action) where T : class
+        internal static void ForEach<T>(this IEnumerable<T> source, Action<T> action) where T : class
         {
            if (source != null)
                foreach (T element in source)

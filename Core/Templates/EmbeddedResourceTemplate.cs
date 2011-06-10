@@ -1,19 +1,18 @@
-﻿using System;
+﻿using System.IO;
 using System.Reflection;
-using System.IO;
 
 namespace RazorMail.Templates
 {
 
-    internal class EmbeddedResourceTemplate : ITemplate
+    public class EmbeddedResourceTemplate : ITemplate
     {
-        private string _resource;
         private Assembly _assembly;
+        private string _resource;
 
-        public EmbeddedResourceTemplate(string resource, Assembly assembly)
+        public EmbeddedResourceTemplate(Assembly assembly, string resource)
         {
-            _resource = string.Format("{0}.{1}", assembly.GetName().Name, resource);
             _assembly = assembly;
+            _resource = string.Format("{0}.{1}", assembly.GetName().Name, resource);
         }
 
         public void Write(Stream template)

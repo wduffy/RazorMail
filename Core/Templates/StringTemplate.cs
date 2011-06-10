@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace RazorMail.Templates
 {
     
-    internal class StringTemplate : ITemplate
+    public class StringTemplate : ITemplate
     {
         private string _template;
 
