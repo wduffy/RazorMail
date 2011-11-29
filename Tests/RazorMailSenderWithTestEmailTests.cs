@@ -10,15 +10,29 @@ namespace RazorMail.Tests
 {
 
     [TestFixture]
-    public class RazorMailSenderTests
+    public class RazorMailSenderWithTestEmailTests
     {
+
+        [Test]
+        public void Constructor_CanSetTestAddress()
+        {
+            // Arrange
+            var message = new RazorMailSenderWithTestEmailTester(ObjectMother.Sender, null, ObjectMother.TestAddress, null);
+
+            // Act
+            var result = message.TestTestAddress;
+
+            // Assert
+            Assert.That(result.DisplayName, Is.EqualTo(Resources.TestingRecipientName));
+            Assert.That(result.Address, Is.EqualTo(ObjectMother.TestAddress));
+        }
 
         [Test]
         [ExpectedException(ExpectedException = typeof(SmtpException), ExpectedMessage = "Failure sending mail.")]
         public void Send_DoesCallSendOnSmtpClient()
         {
             // Arrange
-            var sender = new RazorMailSenderTestable(ObjectMother.Sender, null);
+            var sender = new RazorMailSenderWithTestEmail(ObjectMother.Sender, null, null, new SmtpClient("UNAVAILABLE"));
             var message = new Mock<RazorMailMessage>(ObjectMother.Subject);
             message.Setup(x => x.GetMailMessage(It.IsAny<IParser>())).Returns(ObjectMother.Message);
 
@@ -34,7 +48,7 @@ namespace RazorMail.Tests
         public void GetMailMessage_WithFromAddress_DoesOnlySetSender()
         {
             // Arrange
-            var sender = new RazorMailSenderTester(ObjectMother.Sender, null, ObjectMother.TestAddress);
+            var sender = new RazorMailSenderWithTestEmailTester(ObjectMother.Sender, null, ObjectMother.TestAddress);
             var message = new Mock<RazorMailMessage>(ObjectMother.Subject);
             message.Setup(x => x.GetMailMessage(It.IsAny<IParser>())).Returns(ObjectMother.Message);
 
@@ -50,7 +64,7 @@ namespace RazorMail.Tests
         public void GetMailMessage_WithoutFromAddress_DoesSetSenderAndFrom()
         {
             // Arrange
-            var sender = new RazorMailSenderTester(ObjectMother.Sender, null, ObjectMother.TestAddress);
+            var sender = new RazorMailSenderWithTestEmailTester(ObjectMother.Sender, null, ObjectMother.TestAddress);
             var message = new Mock<RazorMailMessage>(ObjectMother.Subject);
             message.Setup(x => x.GetMailMessage(It.IsAny<IParser>())).Returns(new MailMessage());
 
@@ -66,7 +80,7 @@ namespace RazorMail.Tests
         public void GetMailMessage_WithSystemInTesting_ReplacesRecipientListWithTestingAddress()
         {
             // Arrange
-            var sender = new RazorMailSenderTester(ObjectMother.Sender, null, ObjectMother.TestAddress);
+            var sender = new RazorMailSenderWithTestEmailTester(ObjectMother.Sender, null, ObjectMother.TestAddress);
             var message = new Mock<RazorMailMessage>(ObjectMother.Subject);
             message.Setup(x => x.GetMailMessage(It.IsAny<IParser>())).Returns(ObjectMother.Message);
 
@@ -79,21 +93,7 @@ namespace RazorMail.Tests
             Assert.That(result.To, Has.Count.EqualTo(1));
             Assert.That(result.To.First().Address, Is.EqualTo(ObjectMother.TestAddress));
         }
-
-        [Test]
-        public void GetTestingMailAddress_DoesReturnMailAddressWithTestRecipientName()
-        {
-            // Arrange
-            var message = new RazorMailSenderTester(ObjectMother.Sender, null, null, null);
-
-            // Act
-            var result = message.TestGetTestingMailAddress(ObjectMother.TestAddress);
-
-            // Assert
-            Assert.That(result.DisplayName, Is.EqualTo(Resources.TestingRecipientName));
-            Assert.That(result.Address, Is.EqualTo(ObjectMother.TestAddress));
-        }
-
+        
     }
 
 }

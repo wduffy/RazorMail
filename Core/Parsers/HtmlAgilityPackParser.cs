@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
@@ -95,5 +95,5 @@ namespace RazorMail.Parsers
     }
 
 
-    
+
 }

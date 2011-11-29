@@ -7,7 +7,7 @@ namespace RazorMail
 {
     
     /// <summary>
-    /// An optional abstract base class for razor mail senders.
+    /// Allows applications to send razor templated e-mails by using the Simple Mail Transfer Protocol (SMTP)
     /// </summary>
     public class RazorMailSender : IRazorMailSender
     {

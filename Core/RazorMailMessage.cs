@@ -50,7 +50,7 @@ namespace RazorMail
         internal RazorMailMessage(string subject, Assembly assembly, IFileReader fileReader)
         {
             Message = new MailMessage();
-
+            
             Message.Subject = subject;
             Encoding = Encoding.UTF8;
 
@@ -116,7 +116,7 @@ namespace RazorMail
                 stream.Position = 0;
                 output = new StreamReader(stream).ReadToEnd();
             }
-                        
+
             // Parse the template using RazorEngine and return the result
             return Razor.Parse(output, Set);
         }

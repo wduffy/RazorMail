@@ -63,8 +63,8 @@
     <Compile Include="HtmlAgilityPackParserTests.cs" />
     <Compile Include="MailAddressCollectionExtensionsTests.cs" />
     <Compile Include="Overrides\HtmlAgilityPackTester.cs" />
-    <Compile Include="Overrides\RazorMailSenderTester.cs" />
-    <Compile Include="RazorMailSenderTests.cs" />
+    <Compile Include="Overrides\RazorMailSenderWithTestEmailTester.cs" />
+    <Compile Include="RazorMailSenderWithTestEmailTests.cs" />
     <Compile Include="TemplateCollectionTests.cs" />
     <Compile Include="ObjectMother.cs" />
     <Compile Include="Overrides\RazorMailMessageTester.cs" />
