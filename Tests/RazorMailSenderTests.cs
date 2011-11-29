@@ -18,7 +18,7 @@ namespace RazorMail.Tests
         public void Send_DoesCallSendOnSmtpClient()
         {
             // Arrange
-            var sender = new RazorMailSender(ObjectMother.Sender, null);
+            var sender = new RazorMailSenderTestable(ObjectMother.Sender, null);
             var message = new Mock<RazorMailMessage>(ObjectMother.Subject);
             message.Setup(x => x.GetMailMessage(It.IsAny<IParser>())).Returns(ObjectMother.Message);
 

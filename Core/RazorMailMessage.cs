@@ -4,7 +4,6 @@ using System.Dynamic;
 using System.IO;
 using System.Net.Mail;
 using System.Reflection;
-using System.Text;
 using RazorEngine;
 using RazorMail.Parsers;
 using RazorMail.Properties;
@@ -12,6 +11,7 @@ using RazorMail.Templates;
 
 namespace RazorMail
 {
+    using System.Text;
 
     /// <summary>
     /// Represents a razor e-mail message that can be sent using a concrete implementation of the RazorMail.IRazorMailSender interface.
@@ -107,7 +107,7 @@ namespace RazorMail
         protected string RenderTemplates()
         {
             string output = string.Empty;
-
+            
             // Build the final template from all templates
             using (var stream = new MemoryStream())
             {
@@ -116,7 +116,7 @@ namespace RazorMail
                 stream.Position = 0;
                 output = new StreamReader(stream).ReadToEnd();
             }
-
+                        
             // Parse the template using RazorEngine and return the result
             return Razor.Parse(output, Set);
         }
