@@ -90,10 +90,12 @@ namespace RazorMail
 
             // Create the plain text view (base64)
             var plainTextView = AlternateView.CreateAlternateViewFromString(PlainText ?? parser.StripHtml(body), Encoding, "text/plain");
+            plainTextView.TransferEncoding = System.Net.Mime.TransferEncoding.QuotedPrintable;
             views.Add(plainTextView);
 
             // Create the html view (base64)
             var htmlView = AlternateView.CreateAlternateViewFromString(body, Encoding, "text/html");
+            htmlView.TransferEncoding = System.Net.Mime.TransferEncoding.QuotedPrintable;
             views.Add(htmlView);
 
             // Return the alternate views

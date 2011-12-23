@@ -84,12 +84,13 @@ namespace RazorMail.Parsers
         protected void AppendTableDividers(HtmlNode root)
         {
             root.SelectNodes("//td[position()<last()]|//th[position()<last()]").ForEach(x => { if (!string.IsNullOrWhiteSpace(x.InnerText)) x.AppendChild(HtmlTextNode.CreateNode(", ")); });
-            root.SelectNodes("//td[last()]|//th[last()]").ForEach(x => x.AppendChild(HtmlTextNode.CreateNode("<br />")));
+            //root.SelectNodes("//td[last()]|//th[last()]").ForEach(x => x.AppendChild(HtmlTextNode.CreateNode("<br />")));
+            root.SelectNodes("//td[last()]|//th[last()]").ForEach(x => x.AppendChild(HtmlTextNode.CreateNode("HELLO WORLD")));
         }
 
         protected void ReplaceBrElements(HtmlNode root)
         {
-            root.SelectNodes("//br").ForEach(x => x.ParentNode.ReplaceChild(HtmlTextNode.CreateNode("\r\n"), x));
+            //root.SelectNodes("//br").ForEach(x => x.ParentNode.ReplaceChild(HtmlTextNode.CreateNode("\r\n"), x));
         }
 
     }
