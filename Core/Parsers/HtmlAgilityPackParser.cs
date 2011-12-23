@@ -27,11 +27,10 @@ namespace RazorMail.Parsers
         public string BaseUrls(string html)
         {
             var doc = new HtmlDocument();
-            doc.OptionFixNestedTags = true;
             doc.LoadHtml(html);
 
             Action<HtmlAttribute> @base = x => x.Value = x.Value.Contains("://") ? x.Value : Uri.GetLeftPart(UriPartial.Authority) + "/" + x.Value.TrimStart('/');
-            doc.DocumentNode.SelectNodes("//a[@href]").ForEach(x => @base(x.Attributes["href"]));
+            doc.DocumentNode.SelectNodes("//a[not(contains(@href, 'mailto:'))]").ForEach(x => @base(x.Attributes["href"]));
             doc.DocumentNode.SelectNodes("//img[@src]").ForEach(x => @base(x.Attributes["src"]));
 
             return doc.DocumentNode.InnerHtml;
@@ -40,7 +39,6 @@ namespace RazorMail.Parsers
         public string StripHtml(string html)
         {
             var doc = new HtmlDocument();
-            doc.OptionFixNestedTags = true;
             doc.LoadHtml(html);
 
             Parsers.ForEach(x => x(doc.DocumentNode));
@@ -66,7 +64,7 @@ namespace RazorMail.Parsers
 
         protected void RemoveUnwantedElements(HtmlNode root)
         {
-            root.SelectNodes("//style|//img|//comment()").ForEach(x => x.Remove());
+            root.SelectNodes("//head|//style|//img|//comment()").ForEach(x => x.Remove());
         }
 
         protected void RemoveWhitespace(HtmlNode root)
@@ -78,23 +76,19 @@ namespace RazorMail.Parsers
         protected void AppendBrToBlockElements(HtmlNode root)
         {
             var blocks = new[] { "//address", "//blockquote", "//center", "//div", "//dl", "//fieldset", "//h1", "//h2", "//h3", "//h4", "//h5", "//h6", "//hr", "//li", "//p", "//pre" };
-            root.SelectNodes(string.Join("|", blocks)).ForEach(x => x.AppendChild(HtmlTextNode.CreateNode("<br />")));
+            root.SelectNodes(string.Join("|", blocks)).ForEach(x => x.AppendChild(HtmlNode.CreateNode("<br />")));
         }
 
         protected void AppendTableDividers(HtmlNode root)
         {
-            root.SelectNodes("//td[position()<last()]|//th[position()<last()]").ForEach(x => { if (!string.IsNullOrWhiteSpace(x.InnerText)) x.AppendChild(HtmlTextNode.CreateNode(", ")); });
-            //root.SelectNodes("//td[last()]|//th[last()]").ForEach(x => x.AppendChild(HtmlTextNode.CreateNode("<br />")));
-            root.SelectNodes("//td[last()]|//th[last()]").ForEach(x => x.AppendChild(HtmlTextNode.CreateNode("HELLO WORLD")));
+            root.SelectNodes("//td[position()<last()]|//th[position()<last()]").ForEach(x => x.AppendChild(HtmlTextNode.CreateNode(x.InnerText.Trim(' ').EndsWith(":") ? " " : ", ")));
+            root.SelectNodes("//td[last()]|//th[last()]").ForEach(x => x.AppendChild(HtmlNode.CreateNode("<br />")));
         }
 
         protected void ReplaceBrElements(HtmlNode root)
         {
-            //root.SelectNodes("//br").ForEach(x => x.ParentNode.ReplaceChild(HtmlTextNode.CreateNode("\r\n"), x));
+            root.SelectNodes("//br").ForEach(x => x.ParentNode.ReplaceChild(HtmlTextNode.CreateNode("\r\n"), x));
         }
 
     }
-
-
-
 }

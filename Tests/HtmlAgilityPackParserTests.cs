@@ -17,7 +17,6 @@ namespace RazorMail.Tests
         {
             Uri = new Uri("http://www.wduffy.co.uk");
             Html = new HtmlDocument();
-            Html.OptionFixNestedTags = true;
         }
 
         [Test]
@@ -32,6 +31,19 @@ namespace RazorMail.Tests
             //Assert
             Assert.That(result, Is.StringContaining(Uri.Host + "/test.html"));
             Assert.That(result, Is.StringContaining(Uri.Host + "/image.jpg"));
+        }
+
+        [Test]
+        public void BaseUrls_DoesNotBaseEmailAddress()
+        {
+            // Arrange
+            var parser = new HtmlAgilityPackParser(Uri);
+
+            // Act
+            var result = parser.BaseUrls("<a href=\"mailto:" + ObjectMother.TestAddress + "\">email address</a>");
+
+            //Assert
+            Assert.That(result, Is.Not.StringContaining(Uri.Host));
         }
 
         [Test]
@@ -67,14 +79,14 @@ namespace RazorMail.Tests
         {
             // Arrange
             var parser = new HtmlAgilityPackParserTester(Uri);
-            Html.LoadHtml("<html><body><table><tr><th>Column 1</th><th>Column 2</th></tr><tr><td>Row 1-A</td><td>Row 1-B</td></tr><tr><td>Row 2-A</td><td>Row 2-B</td></tr></table></body></html>");
+            Html.LoadHtml("<html><body><table><tr><th>Column 1:</th><th>Column 2</th></tr><tr><td>Row 1-A:</td><td>Row 1-B</td></tr><tr><td>Row 2-A</td><td>Row 2-B</td></tr></table></body></html>");
 
             // Act
             parser.TestAppendTableDividers(Html.DocumentNode);
 
             // Assert
-            Assert.That(Html.DocumentNode.InnerText, Is.StringContaining("Column 1, Column 2"));
-            Assert.That(Html.DocumentNode.InnerText, Is.StringContaining("Row 1-A, Row 1-B"));
+            Assert.That(Html.DocumentNode.InnerText, Is.StringContaining("Column 1: Column 2"));
+            Assert.That(Html.DocumentNode.InnerText, Is.StringContaining("Row 1-A: Row 1-B"));
             Assert.That(Html.DocumentNode.InnerText, Is.StringContaining("Row 2-A, Row 2-B"));
         }
 
